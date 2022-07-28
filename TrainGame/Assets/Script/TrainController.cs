@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class TrainController : MonoBehaviour
 {
     private int frameCounter = 0;
-    private float trainTransform = 0.01f;
+    private float trainTransform = 0.0003f;
     // Start is called before the first frame update
     void Start()
     {
