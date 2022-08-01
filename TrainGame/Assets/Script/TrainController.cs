@@ -6,7 +6,9 @@ using UnityEngine.UI;
 public class TrainController : MonoBehaviour
 {
     private int frameCounter = 0;
-    private float trainTransform = 0.0003f;
+    private float trainTransform = 0.005f;
+    float span = 0.1f;
+    float delta = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,8 +21,10 @@ public class TrainController : MonoBehaviour
         transform.position += new Vector3(0, trainTransform, 0);
         frameCounter++;
 
-        if (frameCounter == 120)
+        this.delta += Time.deltaTime;
+        if (this.delta > this.span)
         {
+            this.delta = 0;
             frameCounter = 0;
             trainTransform *= -1;
 

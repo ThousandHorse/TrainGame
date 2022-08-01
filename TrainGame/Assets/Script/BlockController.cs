@@ -5,8 +5,7 @@ using UnityEngine;
 public class BlockController : MonoBehaviour
 {
     GameObject player;
-    private float speed = -0.01f;
-    private float screenMinPosition = -9.5f;
+    private float speed = -0.1f;
     float playerRadius = 0.15f;
     float blockRadius = 0.5f;
     
@@ -19,13 +18,9 @@ public class BlockController : MonoBehaviour
     {
         transform.Translate(speed, 0, 0);
 
-        // 画面外に出たら破棄する
-        if (transform.position.x < screenMinPosition)
-        {
-            Destroy(gameObject);
-        }
-
-        //　当たり判定
+        /*
+         * 当たり判定処理
+         */
 
         //　中心座標
         Vector2 blockCenterCoordinates = transform.position;
@@ -36,14 +31,22 @@ public class BlockController : MonoBehaviour
         // PlayerとBlockの距離
         float d = dir.magnitude;
 
-        // 衝突した場合はオブジェクトを破棄
+        // 衝突した場合
         if (playerRadius + blockRadius > d)
         {
-            GameObject uiController = GameObject.Find("UIController");
             // プレイヤーの人数を減らす
+            GameObject uiController = GameObject.Find("UIController");
             uiController.GetComponent<UIController>().CollideWithBlock();
+
+            // ブロックのオブジェクトを破棄
             Destroy(gameObject);
         }
 
+    }
+
+    // 画面外に出たら破棄する
+    private void OnBecameInvisible()
+    {
+        Destroy(gameObject);
     }
 }

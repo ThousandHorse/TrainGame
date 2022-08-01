@@ -5,7 +5,7 @@ using UnityEngine;
 public class BlockGenerator : MonoBehaviour
 {
     public GameObject blockPrefab; // ê›åvê}
-    float span = 1.5f;
+    float span = 2.5f;
     float delta = 0;
 
     void Start()
@@ -20,7 +20,7 @@ public class BlockGenerator : MonoBehaviour
         {
             this.delta = 0;
             GameObject go = Instantiate(blockPrefab) as GameObject;
-            go.transform.position = new Vector3(9.5f, -2.8f, 0);
+            go.transform.position = new Vector3(10.1f, -2.8f, 0);
         }
     }
 }
