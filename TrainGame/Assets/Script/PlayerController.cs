@@ -7,11 +7,12 @@ public class PlayerController : MonoBehaviour
     private bool LButtonDownFlag = false;
     private bool RButtonDownFlag = false;
     private float moveSpeed = 0.2f;
-    private float playerScale = 0.3f;
+    private float playerScale = 1.5f;
     private float limitX = 10.1f;
     private bool isJumpping;
 
     Rigidbody2D rigid2D;
+    Animator animator;
     float jumpForce = 370.0f;
     int moveKey;
 
@@ -41,6 +42,7 @@ public class PlayerController : MonoBehaviour
         if (!isJumpping)
         {
             this.rigid2D.AddForce(transform.up * this.jumpForce);
+            this.animator.SetTrigger("JumpTrigger");
             isJumpping = true;
         }
     }
@@ -48,6 +50,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         this.rigid2D = GetComponent<Rigidbody2D>();
+        this.animator = GetComponent<Animator>();
         isJumpping = false;
     }
 
@@ -58,9 +61,10 @@ public class PlayerController : MonoBehaviour
         if (LButtonDownFlag) moveKey = -1;
         if (RButtonDownFlag) moveKey = 1;
 
+        // ç∂âEà⁄ìÆ
         transform.position += new Vector3(moveSpeed * moveKey, 0, 0);
 
-        // ç∂âEà⁄ìÆ
+        // âÊñ äOÇ…Ç¢Ç©Ç»Ç¢ÇÊÇ§Ç…Ç∑ÇÈ
         if (transform.position.x < -limitX)
         {
             transform.position = new Vector3(-limitX, transform.position.y, 0);
@@ -87,4 +91,5 @@ public class PlayerController : MonoBehaviour
         }
        
     }
+
 }

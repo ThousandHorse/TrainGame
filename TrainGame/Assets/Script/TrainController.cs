@@ -9,25 +9,29 @@ public class TrainController : MonoBehaviour
     private float trainTransform = 0.005f;
     float span = 0.1f;
     float delta = 0;
-    // Start is called before the first frame update
-    void Start()
-    {
+    bool isStopped = false;
 
-    }
-
-    // Update is called once per frame
     void Update()
     {
-        transform.position += new Vector3(0, trainTransform, 0);
-        frameCounter++;
-
-        this.delta += Time.deltaTime;
-        if (this.delta > this.span)
+        if (!isStopped)
         {
-            this.delta = 0;
-            frameCounter = 0;
-            trainTransform *= -1;
+            transform.position += new Vector3(0, trainTransform, 0);
+            frameCounter++;
 
+            this.delta += Time.deltaTime;
+            if (this.delta > this.span)
+            {
+                this.delta = 0;
+                frameCounter = 0;
+                trainTransform *= -1;
+
+            }
         }
     }
+
+    public void StopTrain()
+    {
+        isStopped = true;
+    }
+
 }

@@ -6,33 +6,36 @@ public class BlockController : MonoBehaviour
 {
     GameObject player;
     private float speed = -0.1f;
-    float playerRadius = 0.15f;
-    float blockRadius = 0.5f;
+    private float scaleX;
+    private float scaleY;
     
     void Start()
     {
         this.player = GameObject.Find("Player");
+        scaleX = Random.Range(1.0f, 2.7f);
+        scaleY = Random.Range(0.7f, 1.5f);
     }
 
     void Update()
     {
+        // 速度調整
         transform.Translate(speed, 0, 0);
 
-        /*
-         * 当たり判定処理
-         */
+        // 大きさ
+        transform.localScale = new Vector3(scaleX, scaleY, 0);
 
-        //　中心座標
-        Vector2 blockCenterCoordinates = transform.position;
-        Vector2 playerCenterCoordinates = this.player.transform.position;　
+    }
 
-        Vector2 dir = blockCenterCoordinates - playerCenterCoordinates;
+    // 画面外に出たら破棄する
+    private void OnBecameInvisible()
+    {
+        Destroy(gameObject);
+    }
 
-        // PlayerとBlockの距離
-        float d = dir.magnitude;
-
-        // 衝突した場合
-        if (playerRadius + blockRadius > d)
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        // プレイヤーと衝突した場合
+        if (collision.gameObject.CompareTag("Player"))
         {
             // プレイヤーの人数を減らす
             GameObject uiController = GameObject.Find("UIController");
@@ -41,12 +44,5 @@ public class BlockController : MonoBehaviour
             // ブロックのオブジェクトを破棄
             Destroy(gameObject);
         }
-
-    }
-
-    // 画面外に出たら破棄する
-    private void OnBecameInvisible()
-    {
-        Destroy(gameObject);
     }
 }
