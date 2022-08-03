@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class TrainController : MonoBehaviour
 {
     private int frameCounter = 0;
-    private float trainTransform = 0.005f;
+    private float trainTransform = 0.003f;
     float span = 0.1f;
     float delta = 0;
     bool isStopped = false;

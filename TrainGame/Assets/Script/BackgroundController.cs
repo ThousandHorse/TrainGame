@@ -12,7 +12,7 @@ public class BackgroundController : MonoBehaviour
     Vector3 defaultPos2;
     Vector3 defaultPos3;
     Vector3 defaultPos4;
-    float speed = -0.1f;
+    float speed = -0.05f;
 
     void Start()
     {
