@@ -1,55 +1,99 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BackgroundController : MonoBehaviour
 {
-    GameObject background1;
-    GameObject background2;
-    GameObject background3;
-    GameObject background4;
-    Vector3 defaultPos1;
-    Vector3 defaultPos2;
-    Vector3 defaultPos3;
-    Vector3 defaultPos4;
-    float speed = -0.05f;
+    // îwåiÇÃêîÇ™ïœçXÇ≥ÇÍÇΩÇÁílÇïœÇ¶ÇÈ
+    const float MIN_POS = -31.0f;
+    const float MAX_POS = 79.0f;
+    const float BACKGROUND_SPEED = 0.2f;
+    float speed;
+    bool isStopBg = false;
+    float delta = 0;
+    float stopTime = 5.0f;
+    float stopPos;
+    bool flg = false;
+
+    // ìdé‘
+    GameObject[] trainArray;
+
+    // îwåi(âwà»äO)
+    GameObject[] backgroundArray;
+
+    // îwåi(âw)
+    GameObject stationBackground;
+
 
     void Start()
     {
-        background1 = GameObject.Find("Background1");
-        background2 = GameObject.Find("Background2");
-        background3 = GameObject.Find("Background3");
-        background4 = GameObject.Find("Background4");
+        speed = BACKGROUND_SPEED;
+        trainArray = GameObject.FindGameObjectsWithTag("Train");
+        backgroundArray = GameObject.FindGameObjectsWithTag("Background");
+        stationBackground = GameObject.FindGameObjectWithTag("StationBackground");
 
-        defaultPos1 = background1.transform.position;
-        defaultPos2 = background2.transform.position;
-        defaultPos3 = background3.transform.position;
-        defaultPos4 = background4.transform.position;
+        stopPos = transform.position.x;
     }
 
     void Update()
     {
-        background1.transform.position += new Vector3(speed, 0, 0);
-        background2.transform.position += new Vector3(speed, 0, 0);
-        background3.transform.position += new Vector3(speed, 0, 0);
-        background4.transform.position += new Vector3(speed, 0, 0);
+        // îwåiÇxé≤ï˚å¸Ç…à⁄ìÆÇ≥ÇπÇÈ
+        transform.position -= new Vector3(speed, 0, 0);
 
-        if (background4.transform.position.x <= defaultPos1.x)
+        if (transform.position.x <= MIN_POS)
         {
-            //Å@îwåiÇç≈èâÇÃà íuÇ…ñﬂÇ∑(ÉãÅ[Év)
-            background1.transform.position = defaultPos1;
-            background2.transform.position = defaultPos2;
-            background3.transform.position = defaultPos3;
-            background4.transform.position = defaultPos4;
+            // îwåiÇç≈å„îˆÇ…à⁄ìÆÇ∑ÇÈ
+            transform.position = new Vector3(MAX_POS, transform.position.y, transform.position.z);
 
-            //Å@âwñºÇïœÇ¶ÇÈ
-            GameObject uiController = GameObject.Find("UIController");
-            uiController.GetComponent<UIController>().changeStation();
+            if (gameObject == stationBackground)
+            {
+                //Å@âwñºÇïœÇ¶ÇÈ
+                GameObject uiController = GameObject.Find("UIController");
+                uiController.GetComponent<UIController>().changeStation();
+               
+            }
+        }
+
+        // âwÇ…ìûíÖÇµÇΩÇ∆Ç´ÅAîwåiÇ∆ìdé‘Çé~ÇﬂÇÈ
+        if (transform.position.x <= stopPos)
+        {
+
+            Debug.Log("Stop");
+            StopBackGround();
+
+            foreach (var train in trainArray)
+            {
+                train.GetComponent<TrainController>().StopTrain();
+            }
 
         }
+
+        if (isStopBg)
+        {
+            this.delta += Time.deltaTime;
+            // í‚é‘éûä‘ÇâﬂÇ¨ÇΩÇ∆Ç´ÅAîwåiÅAìdé‘ÇçƒìxìÆÇ©Ç∑
+            if (this.delta >= stopTime)
+            {
+                this.delta = 0;
+
+                RunBackGround();
+
+                foreach (var train in trainArray)
+                {
+                    train.GetComponent<TrainController>().RunTrain();
+                }
+            }
+        }
     }
+
     public void StopBackGround()
     {
         speed = 0;
+        isStopBg = true;
     }
+
+    public void RunBackGround()
+    {
+        speed = BACKGROUND_SPEED;
+        isStopBg = false;
+    }
+
 }

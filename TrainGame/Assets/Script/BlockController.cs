@@ -5,15 +5,15 @@ using UnityEngine;
 public class BlockController : MonoBehaviour
 {
     GameObject player;
-    private float speed = -0.1f;
+    private float speed = -0.2f;
     private float scaleX;
     private float scaleY;
     
     void Start()
     {
         this.player = GameObject.Find("Player");
-        scaleX = Random.Range(1.0f, 2.7f);
-        scaleY = Random.Range(0.7f, 1.5f);
+        scaleX = Random.Range(1.0f, 2.0f);
+        scaleY = Random.Range(0.7f, 1.0f);
     }
 
     void Update()

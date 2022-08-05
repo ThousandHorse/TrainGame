@@ -84,8 +84,8 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        // 電車(ステージ)に着地したとき
-        if (collision.gameObject.CompareTag("Stage"))
+        // 電車に着地したとき
+        if (collision.gameObject.CompareTag("Train"))
         {
             isJumpping = false;
         }

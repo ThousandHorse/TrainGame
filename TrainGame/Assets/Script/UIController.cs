@@ -6,17 +6,19 @@ using TMPro;
 
 public class UIController : MonoBehaviour
 {
+    const int SUM_TRAIN = 9;
+    const int SUM_BACKGROUND = 6;
+
+    GameObject[] backgroundArray = new GameObject[SUM_BACKGROUND];
+    GameObject[] trainArray = new GameObject[SUM_TRAIN];
     List<GameObject> playerCountList = new List<GameObject>();
-    GameObject[] trainArray = new GameObject[9];
+
     public TextMeshProUGUI finishedGameText;
     public TextMeshProUGUI stationName;
     public GameObject operationButtton;
     public GameObject restartButton;
-    //float delta = 0;
-    //float span = 1.0f;
     int stationCount = 0;
     int playerCount = 2;
-    //bool isFinishedGame = false;
 
     string startStation = "ŒÜ”½“c";
     string[] stationArray = new string[29]
@@ -27,8 +29,6 @@ public class UIController : MonoBehaviour
             "’r@‘Ü","–Ú@”’","‚“c”nê","V‘å‹v•Û","V@h","‘ãX–Ø",
             "Œ´@h","a@’J","Œb”äŽõ","–Ú@•","ŒÜ”½“c"
         };
-
-
 
     void Start()
     {
@@ -55,24 +55,7 @@ public class UIController : MonoBehaviour
     }
     void Update()
     {
-        //if (!isFinishedGame)
-        //{
-        //    this.delta += Time.deltaTime;
-        //    if (this.delta > this.span)
-        //    {
-        //        this.delta = 0;
-        //        stationCount++;
-        //        if (stationCount < stationArray.Length)
-        //        {
-        //            stationName.text = stationArray[stationCount];
-        //        }
-        //        else
-        //        {
-        //            FinishGame("GAME CLEAR");
-        //        }
-        //    }
-        //}
-
+       
     }
 
     public void changeStation()
@@ -132,26 +115,19 @@ public class UIController : MonoBehaviour
         }
 
         // “dŽÔ‚ðŽ~‚ß‚é
-        trainArray[0] = GameObject.Find("Train/Train0");
-        trainArray[1] = GameObject.Find("Train/Train1");
-        trainArray[2] = GameObject.Find("Train/Train2");
-        trainArray[3] = GameObject.Find("Train/Train3");
-        trainArray[4] = GameObject.Find("Train/Train4");
-        trainArray[5] = GameObject.Find("Train/Train5");
-        trainArray[6] = GameObject.Find("Train/Train6");
-        trainArray[7] = GameObject.Find("Train/Train7");
-        trainArray[8] = GameObject.Find("Train/Train8");
-
-        foreach (var train in trainArray)
+        for (int i = 0; i < SUM_TRAIN; i++)
         {
-            train.GetComponent<TrainController>().StopTrain();
+            string trainLocation = $"Train/Train{i}";
+            trainArray[i] = GameObject.Find(trainLocation);
+            trainArray[i].GetComponent<TrainController>().StopTrain();
         }
 
         // ”wŒi‚Ì“®‚«‚ðŽ~‚ß‚é
-        GameObject backgroundController = GameObject.Find("BackgroundController");
-        backgroundController.GetComponent<BackgroundController>().StopBackGround();
-
-        //isFinishedGame = true;
-
+        for (int i = 0; i < SUM_BACKGROUND; i++)
+        {
+            string bgLocation = $"Background/Background{i}";
+            GameObject backgroundController = GameObject.Find(bgLocation);
+            backgroundController.GetComponent<BackgroundController>().StopBackGround();
+        } 
     }
 }
