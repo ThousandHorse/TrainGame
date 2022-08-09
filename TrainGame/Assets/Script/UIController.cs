@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -7,28 +6,15 @@ using TMPro;
 public class UIController : MonoBehaviour
 {
     const int SUM_TRAIN = 9;
-    const int SUM_BACKGROUND = 6;
 
-    GameObject[] backgroundArray = new GameObject[SUM_BACKGROUND];
     GameObject[] trainArray = new GameObject[SUM_TRAIN];
     List<GameObject> playerCountList = new List<GameObject>();
 
-    public TextMeshProUGUI finishedGameText;
-    public TextMeshProUGUI stationName;
-    public GameObject operationButtton;
-    public GameObject restartButton;
-    int stationCount = 0;
-    int playerCount = 2;
+    public TextMeshProUGUI gameText;
 
-    string startStation = "五反田";
-    string[] stationArray = new string[29]
-        {
-            "大　崎","品　川","田　町","浜松町","新　橋","有楽町",
-            "東　京","神　田","秋葉原","御徒町","上　野","鶯　谷",
-            "日暮里","西日暮里","田　端","駒　込","巣　鴨","大　塚",
-            "池　袋","目　白","高田馬場","新大久保","新　宿","代々木",
-            "原　宿","渋　谷","恵比寿","目　黒","五反田"
-        };
+    GameObject[] operationButttons;
+    GameObject restartButton;
+    int playerCount = 2;
 
     void Start()
     {
@@ -38,39 +24,15 @@ public class UIController : MonoBehaviour
         playerCountList.Add(GameObject.Find("PlayerCountImage3"));
 
         // ←、→、Jumpボタン
-        operationButtton = GameObject.Find("Canvas/Button");
+        operationButttons = GameObject.FindGameObjectsWithTag("OperationButtton");
 
         // Restartボタンを非表示
-        restartButton = GameObject.Find("Canvas/RestartButton");
+        restartButton = GameObject.FindGameObjectWithTag("RestartButton");
         restartButton.SetActive(false);
 
-        // 駅名
-        stationName.color = new Color(0, 0, 0, 1);
-        stationName.text = startStation;
-
         // ゲーム実行中は非表示
-        finishedGameText.gameObject.SetActive(false);
+        gameText.gameObject.SetActive(false);
 
-
-    }
-    void Update()
-    {
-       
-    }
-
-    public void changeStation()
-    {
-        if (stationCount < stationArray.Length)
-        {
-            stationName.text = stationArray[stationCount];
-            stationCount++;
-        }
-        else
-        {
-            FinishGame("GAME CLEAR");
-            stationCount = 0;
-        }
-            
     }
 
     public void CollideWithBlock()
@@ -94,15 +56,18 @@ public class UIController : MonoBehaviour
         SceneManager.LoadScene("TrainGameScene");
     }
 
-    private void FinishGame(string uiText)
+    public void FinishGame(string finishedGameText)
     {
         // ゲーム終了時にテキストを表示
-        finishedGameText.text = uiText;
-        finishedGameText.color = new Color(1, 0, 0, 1);
-        finishedGameText.gameObject.SetActive(true);
+        gameText.text = finishedGameText;
+        gameText.color = new Color(1, 0, 0, 1);
+        gameText.gameObject.SetActive(true);
 
         // ←、→、Jumpボタンを非表示
-        operationButtton.SetActive(false);
+        foreach (var operationButtton in operationButttons)
+        {
+            operationButtton.SetActive(false);
+        }
 
         // Restartボタンを表示
         restartButton.SetActive(true);
@@ -114,6 +79,14 @@ public class UIController : MonoBehaviour
             blockGenerator.GetComponent<BlockGenerator>().FinishGame();
         }
 
+        // 障害物が既に生成されていた場合、破棄する
+        GameObject[] obstacles = GameObject.FindGameObjectsWithTag("Obstacle");
+        foreach (var obstacle in obstacles)
+        {
+            obstacle.GetComponent<BlockController>().DestroyObstacle();
+        }
+
+
         // 電車を止める
         for (int i = 0; i < SUM_TRAIN; i++)
         {
@@ -123,11 +96,21 @@ public class UIController : MonoBehaviour
         }
 
         // 背景の動きを止める
-        for (int i = 0; i < SUM_BACKGROUND; i++)
-        {
-            string bgLocation = $"Background/Background{i}";
-            GameObject backgroundController = GameObject.Find(bgLocation);
-            backgroundController.GetComponent<BackgroundController>().StopBackGround();
-        } 
+        GameObject mainBackground = GameObject.FindGameObjectWithTag("MainBackground");
+        mainBackground.GetComponent<BackgroundController>().StopBackGround(true);
+    }
+
+    // 駅が近くなったことを通知する
+    public void notifyStation(string stationName)
+    {
+        string removeBlank = stationName.Replace("　","");
+        gameText.text = $"まもなく{removeBlank}駅に到着します。";
+        gameText.gameObject.SetActive(true);
+
+    }
+
+    public void hiddenText()
+    {
+        gameText.gameObject.SetActive(false);
     }
 }

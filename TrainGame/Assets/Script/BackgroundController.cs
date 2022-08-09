@@ -1,93 +1,168 @@
 using UnityEngine;
+using TMPro;
 
 public class BackgroundController : MonoBehaviour
 {
     // ”wi‚Μ”‚ª•ΟX‚³‚κ‚½‚η’l‚π•Ο‚¦‚ι
-    const float MIN_POS = -31.0f;
-    const float MAX_POS = 79.0f;
-    const float BACKGROUND_SPEED = 0.2f;
+    const float BACKGROUND_SPEED = 0.02f;
     float speed;
     bool isStopBg = false;
+    bool isFinishedGame = false;
     float delta = 0;
-    float stopTime = 5.0f;
-    float stopPos;
-    bool flg = false;
+    float stopTime = 3.0f;
+    // ƒQ[ƒ€Jn‚ΜΚ’u
+    float defaultPosX;
+    // ’βΤΚ’u
+    float stopPosX;
+    // ά‚θ•Τ‚µΚ’u
+    float firstBgPosX;
+
+    public TextMeshProUGUI stationName;
+
+    string[] stations = new string[29]
+        {
+            "‘ε@θ","•i@μ","“c@’¬","•lΌ’¬","V@‹΄","—Ly’¬",
+            "“@‹","_@“c","H—t΄","δ“k’¬","γ@–μ","ις@’J",
+            "“ϊ•ι—Ά","Ό“ϊ•ι—Ά","“c@’[","‹ξ@","‘ƒ@›","‘ε@’Λ",
+            "’r@‘ά","–Ϊ@”’","‚“c”nκ","V‘ε‹v•Ϋ","V@h","‘γX–Ψ",
+            "΄@h","a@’J","b”δυ","–Ϊ@•","ά”½“c"
+        };
+
+    //string[] stations = new string[3]
+    //    {
+    //        "‘ε@θ","•i@μ","“c@’¬"
+    //    };
+
+    int stationCount = 0;
+
 
     // “dΤ
-    GameObject[] trainArray;
+    GameObject[] trains;
 
-    // ”wi(‰wΘO)
-    GameObject[] backgroundArray;
+    // ζ“ª‚Μ”wi
+    GameObject firstBackground;
 
-    // ”wi(‰w)
+    // Εγ”φ‚Μ”wi
+    GameObject lastBackground;
+
+    // ‰w‚Μ”wi
     GameObject stationBackground;
+
+    // UI‘€μ
+    GameObject uiController;
 
 
     void Start()
     {
         speed = BACKGROUND_SPEED;
-        trainArray = GameObject.FindGameObjectsWithTag("Train");
-        backgroundArray = GameObject.FindGameObjectsWithTag("Background");
-        stationBackground = GameObject.FindGameObjectWithTag("StationBackground");
+        trains = GameObject.FindGameObjectsWithTag("Train");
+        firstBackground = GameObject.FindGameObjectWithTag("FirstBackground");
+        lastBackground = GameObject.FindGameObjectWithTag("LastBackground");
+        stationBackground = GameObject.FindGameObjectWithTag("MainBackground");
 
-        stopPos = transform.position.x;
+        defaultPosX = transform.position.x;
+        stopPosX = defaultPosX;
+
+        firstBgPosX = defaultPosX - firstBackground.transform.position.x;
+
+        // ‰w–Ό‚πƒZƒbƒg
+        stationName.color = new Color(0, 0, 0, 1);
+        if (stations.Length >= 1)
+        {
+            stationName.text = stations[stations.Length - 1];
+        }
+
+        uiController = GameObject.Find("UIController");
+
     }
 
     void Update()
     {
-        // ”wi‚πx²•ϋό‚ΙΪ“®‚³‚Ή‚ι
-        transform.position -= new Vector3(speed, 0, 0);
-
-        if (transform.position.x <= MIN_POS)
+        if (!isFinishedGame)
         {
-            // ”wi‚πΕγ”φ‚ΙΪ“®‚·‚ι
-            transform.position = new Vector3(MAX_POS, transform.position.y, transform.position.z);
+            // ”wi‚πx²•ϋό‚ΙΪ“®‚³‚Ή‚ι
+            transform.position -= new Vector3(speed, 0, 0);
 
-            if (gameObject == stationBackground)
+            if (lastBackground.transform.position.x <= defaultPosX)
             {
-                //@‰w–Ό‚π•Ο‚¦‚ι
-                GameObject uiController = GameObject.Find("UIController");
-                uiController.GetComponent<UIController>().changeStation();
-               
-            }
-        }
+                // ”wi‚πΕγ”φ‚ΙΪ“®‚·‚ι
+                transform.position = new Vector3(firstBgPosX, transform.position.y, transform.position.z);
 
-        // ‰w‚Ι“’…‚µ‚½‚Ζ‚«A”wi‚Ζ“dΤ‚π~‚ί‚ι
-        if (transform.position.x <= stopPos)
-        {
-
-            Debug.Log("Stop");
-            StopBackGround();
-
-            foreach (var train in trainArray)
-            {
-                train.GetComponent<TrainController>().StopTrain();
-            }
-
-        }
-
-        if (isStopBg)
-        {
-            this.delta += Time.deltaTime;
-            // ’βΤΤ‚π‰ί‚¬‚½‚Ζ‚«A”wiA“dΤ‚πΔ“x“®‚©‚·
-            if (this.delta >= stopTime)
-            {
-                this.delta = 0;
-
-                RunBackGround();
-
-                foreach (var train in trainArray)
+                if (gameObject == stationBackground)
                 {
-                    train.GetComponent<TrainController>().RunTrain();
+                    if (stationCount < stations.Length)
+                    {
+                        // ‰w–Ό‚π•Ο‚¦‚ι
+                        stationName.text = stations[stationCount];
+                        stationCount++;
+
+                        // ‰w‚ª‹ί‚Γ‚Ά‚½‚±‚Ζ‚π’m‚η‚Ή‚ι
+                        uiController.GetComponent<UIController>().notifyStation(stationName.text);
+                    }
+
+                    // ’βΤΚ’u‚πΔέ’θ
+                    stopPosX = defaultPosX;
+
+                }
+                
+            }
+
+
+            // ‰w‚Ι“’…‚µ‚½‚Ζ‚«
+            if (transform.position.x <= stopPosX)
+            {
+                // ”wi‚π~‚ί‚ι
+                StopBackGround(false);
+
+                // “dΤ‚π~‚ί‚ι
+                foreach (var train in trains)
+                {
+                    train.GetComponent<TrainController>().StopTrain();
+                }
+
+                // ƒeƒLƒXƒg‚π”ρ•\¦‚Ι‚·‚ι
+                uiController.GetComponent<UIController>().hiddenText();
+
+                // Εγ‚Μ‰w‚Ι“’…‚µ‚½κ‡AƒQ[ƒ€ƒNƒƒA‚π•\¦‚·‚ι
+                if (stationCount == stations.Length)
+                {
+                    GameObject uiController = GameObject.Find("UIController");
+                    uiController.GetComponent<UIController>().FinishGame("GAME CLEAR");
+                    
+                    isFinishedGame = true;
+                    isStopBg = false;
+                }
+
+                if (isStopBg)
+                {
+                    this.delta += Time.deltaTime;
+                    // ’βΤΤ‚π‰ί‚¬‚½‚Ζ‚«A”wiA“dΤ‚πΔ“x“®‚©‚·
+                    if (this.delta >= stopTime)
+                    {
+                        this.delta = 0;
+                        // “–Yπ—‚πƒ‹[ƒv‚µ‚Θ‚Ά‚ζ‚¤‚Ι‘ή”π‚³‚Ή‚ι
+                        stopPosX = -10000;
+
+                        RunBackGround();
+
+                        foreach (var train in trains)
+                        {
+                            train.GetComponent<TrainController>().RunTrain();
+                        }
+                    }
                 }
             }
         }
+
     }
 
-    public void StopBackGround()
+    public void StopBackGround(bool isFinishedGame)
     {
+        // ƒQ[ƒ€I—ΉA“dΤ‚ª“®‚©‚Θ‚Ά‚ζ‚¤‚Ιƒtƒ‰ƒO‚π—§‚Δ‚ι
+        this.isFinishedGame = isFinishedGame;
         speed = 0;
         isStopBg = true;
+        
     }
 
     public void RunBackGround()
