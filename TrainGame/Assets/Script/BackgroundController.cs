@@ -3,13 +3,14 @@ using TMPro;
 
 public class BackgroundController : MonoBehaviour
 {
-    // 背景の数が変更されたら値を変える
     const float BACKGROUND_SPEED = 0.02f;
+    const float STOP_TIME = 3.0f;
+
     float speed;
     bool isStopBg = false;
     bool isFinishedGame = false;
     float delta = 0;
-    float stopTime = 3.0f;
+    
     // ゲーム開始時の位置
     float defaultPosX;
     // 停車位置
@@ -28,6 +29,8 @@ public class BackgroundController : MonoBehaviour
             "原　宿","渋　谷","恵比寿","目　黒","五反田"
         };
 
+
+    // 簡易版(テスト用)
     //string[] stations = new string[3]
     //    {
     //        "大　崎","品　川","田　町"
@@ -37,7 +40,7 @@ public class BackgroundController : MonoBehaviour
 
 
     // 電車
-    GameObject[] trains;
+    GameObject trains;
 
     // 先頭の背景
     GameObject firstBackground;
@@ -55,7 +58,7 @@ public class BackgroundController : MonoBehaviour
     void Start()
     {
         speed = BACKGROUND_SPEED;
-        trains = GameObject.FindGameObjectsWithTag("Train");
+        trains = GameObject.FindGameObjectWithTag("Train");
         firstBackground = GameObject.FindGameObjectWithTag("FirstBackground");
         lastBackground = GameObject.FindGameObjectWithTag("LastBackground");
         stationBackground = GameObject.FindGameObjectWithTag("MainBackground");
@@ -104,7 +107,7 @@ public class BackgroundController : MonoBehaviour
                     stopPosX = defaultPosX;
 
                 }
-                
+
             }
 
 
@@ -115,10 +118,7 @@ public class BackgroundController : MonoBehaviour
                 StopBackGround(false);
 
                 // 電車を止める
-                foreach (var train in trains)
-                {
-                    train.GetComponent<TrainController>().StopTrain();
-                }
+                trains.GetComponent<TrainController>().StopTrain();
 
                 // テキストを非表示にする
                 uiController.GetComponent<UIController>().hiddenText();
@@ -128,7 +128,7 @@ public class BackgroundController : MonoBehaviour
                 {
                     GameObject uiController = GameObject.Find("UIController");
                     uiController.GetComponent<UIController>().FinishGame("GAME CLEAR");
-                    
+
                     isFinishedGame = true;
                     isStopBg = false;
                 }
@@ -136,19 +136,18 @@ public class BackgroundController : MonoBehaviour
                 if (isStopBg)
                 {
                     this.delta += Time.deltaTime;
-                    // 停車時間を過ぎたとき、背景、電車を再度動かす
-                    if (this.delta >= stopTime)
+
+                    // 停車時間を過ぎたとき
+                    if (this.delta >= STOP_TIME)
                     {
                         this.delta = 0;
+
+                        // 背景、電車を再度動かす
+                        RunBackGround();
+                        trains.GetComponent<TrainController>().RunTrain();
+
                         // 当該条件処理をループしないように退避させる
                         stopPosX = -10000;
-
-                        RunBackGround();
-
-                        foreach (var train in trains)
-                        {
-                            train.GetComponent<TrainController>().RunTrain();
-                        }
                     }
                 }
             }
@@ -162,7 +161,7 @@ public class BackgroundController : MonoBehaviour
         this.isFinishedGame = isFinishedGame;
         speed = 0;
         isStopBg = true;
-        
+
     }
 
     public void RunBackGround()

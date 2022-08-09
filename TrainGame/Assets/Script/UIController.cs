@@ -7,7 +7,10 @@ public class UIController : MonoBehaviour
 {
     const int SUM_TRAIN = 9;
 
-    GameObject[] trainArray = new GameObject[SUM_TRAIN];
+    GameObject trains;
+    GameObject mainBackground;
+
+
     List<GameObject> playerCountList = new List<GameObject>();
 
     public TextMeshProUGUI gameText;
@@ -32,6 +35,9 @@ public class UIController : MonoBehaviour
 
         // ƒQ[ƒ€Às’†‚Í”ñ•\¦
         gameText.gameObject.SetActive(false);
+
+        trains = GameObject.FindGameObjectWithTag("Train");
+        mainBackground = GameObject.FindGameObjectWithTag("MainBackground");
 
     }
 
@@ -73,37 +79,30 @@ public class UIController : MonoBehaviour
         restartButton.SetActive(true);
 
         // áŠQ•¨‚ğo‚³‚È‚¢‚æ‚¤‚É‚·‚é
-        GameObject blockGenerator = GameObject.Find("BlockGenerator");
-        if (blockGenerator != null)
+        GameObject obstacleGenerator = GameObject.Find("ObstacleGenerator");
+        if (obstacleGenerator != null)
         {
-            blockGenerator.GetComponent<BlockGenerator>().FinishGame();
+            obstacleGenerator.GetComponent<ObstacleGenerator>().FinishGame();
         }
 
         // áŠQ•¨‚ªŠù‚É¶¬‚³‚ê‚Ä‚¢‚½ê‡A”jŠü‚·‚é
         GameObject[] obstacles = GameObject.FindGameObjectsWithTag("Obstacle");
         foreach (var obstacle in obstacles)
         {
-            obstacle.GetComponent<BlockController>().DestroyObstacle();
+            obstacle.GetComponent<ObstacleController>().DestroyObstacle();
         }
-
 
         // “dÔ‚ğ~‚ß‚é
-        for (int i = 0; i < SUM_TRAIN; i++)
-        {
-            string trainLocation = $"Train/Train{i}";
-            trainArray[i] = GameObject.Find(trainLocation);
-            trainArray[i].GetComponent<TrainController>().StopTrain();
-        }
+        trains.GetComponent<TrainController>().StopTrain();
 
         // ”wŒi‚Ì“®‚«‚ğ~‚ß‚é
-        GameObject mainBackground = GameObject.FindGameObjectWithTag("MainBackground");
         mainBackground.GetComponent<BackgroundController>().StopBackGround(true);
     }
 
     // ‰w‚ª‹ß‚­‚È‚Á‚½‚±‚Æ‚ğ’Ê’m‚·‚é
     public void notifyStation(string stationName)
     {
-        string removeBlank = stationName.Replace("@","");
+        string removeBlank = stationName.Replace("@", "");
         gameText.text = $"‚Ü‚à‚È‚­{removeBlank}‰w‚É“’…‚µ‚Ü‚·B";
         gameText.gameObject.SetActive(true);
 
