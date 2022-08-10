@@ -5,15 +5,18 @@ using TMPro;
 
 public class UIController : MonoBehaviour
 {
-    const int SUM_TRAIN = 9;
+    const int STATION_SUM = 29;
+    const int STATION_SUM_TEST = 2;
 
     GameObject trains;
     GameObject mainBackground;
 
-
     List<GameObject> playerCountList = new List<GameObject>();
 
     public TextMeshProUGUI gameText;
+    public TextMeshProUGUI stationCountDownText;
+
+    int stationCountDown;
 
     GameObject[] operationButttons;
     GameObject restartButton;
@@ -39,6 +42,15 @@ public class UIController : MonoBehaviour
         trains = GameObject.FindGameObjectWithTag("Train");
         mainBackground = GameObject.FindGameObjectWithTag("MainBackground");
 
+
+        stationCountDown = STATION_SUM_TEST + 1;
+
+    }
+
+    void Update()
+    {
+        // 残駅数をテキスト表示
+        stationCountDownText.text = $"残り{stationCountDown}駅";
     }
 
     public void CollideWithBlock()
@@ -52,7 +64,7 @@ public class UIController : MonoBehaviour
         // 4回目に衝突した場合
         else
         {
-            FinishGame("GAME OVER");
+            FinishGame($"GAME OVER\n記録：{STATION_SUM_TEST - stationCountDown}/{STATION_SUM_TEST}駅達成！");
         }
 
     }
@@ -66,7 +78,7 @@ public class UIController : MonoBehaviour
     {
         // ゲーム終了時にテキストを表示
         gameText.text = finishedGameText;
-        gameText.color = new Color(1, 0, 0, 1);
+        gameText.color = new Color(1, 1, 0, 1);
         gameText.gameObject.SetActive(true);
 
         // ←、→、Jumpボタンを非表示
@@ -100,7 +112,7 @@ public class UIController : MonoBehaviour
     }
 
     // 駅が近くなったことを通知する
-    public void notifyStation(string stationName)
+    public void NotifyStation(string stationName)
     {
         string removeBlank = stationName.Replace("　", "");
         gameText.text = $"まもなく{removeBlank}駅に到着します。";
@@ -108,8 +120,14 @@ public class UIController : MonoBehaviour
 
     }
 
-    public void hiddenText()
+    public void HiddenText()
     {
         gameText.gameObject.SetActive(false);
+    }
+
+    public void StationCountDown()
+    {
+        // 残駅数を減らす
+        stationCountDown--;
     }
 }

@@ -7,7 +7,7 @@ public class ObstacleGenerator : MonoBehaviour
     public GameObject PBirdPrefab;
     GameObject[] birdPrefabs = new GameObject[3];
     float startPosX;
-    float startPosY = -2.8f;
+    float startPosY;
     float span;
     float delta = 0;
 
@@ -37,9 +37,8 @@ public class ObstacleGenerator : MonoBehaviour
             this.span = Random.Range(1.5f, 4.0f);
 
             // ’¹‚ðƒ‰ƒ“ƒ_ƒ€‚Å•\Ž¦‚³‚¹‚é
-            birdIndex = Random.Range(0, birdPrefabs.Length - 1);
+            birdIndex = Random.Range(0, birdPrefabs.Length);
 
-            //GameObject go = Instantiate(RBirdPrefab) as GameObject;
             GameObject go = Instantiate(birdPrefabs[birdIndex]) as GameObject;
             go.transform.position = new Vector3(startPosX, startPosY, 0);
         }

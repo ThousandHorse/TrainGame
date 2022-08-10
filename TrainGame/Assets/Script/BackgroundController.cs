@@ -10,7 +10,7 @@ public class BackgroundController : MonoBehaviour
     bool isStopBg = false;
     bool isFinishedGame = false;
     float delta = 0;
-    
+
     // ゲーム開始時の位置
     float defaultPosX;
     // 停車位置
@@ -20,24 +20,27 @@ public class BackgroundController : MonoBehaviour
 
     public TextMeshProUGUI stationName;
 
-    string[] stations = new string[29]
-        {
-            "大　崎","品　川","田　町","浜松町","新　橋","有楽町",
-            "東　京","神　田","秋葉原","御徒町","上　野","鶯　谷",
-            "日暮里","西日暮里","田　端","駒　込","巣　鴨","大　塚",
-            "池　袋","目　白","高田馬場","新大久保","新　宿","代々木",
-            "原　宿","渋　谷","恵比寿","目　黒","五反田"
-        };
+
+
+    //string[] stations = new string[29]
+    //    {
+    //        "大　崎","品　川","田　町","浜松町","新　橋","有楽町",
+    //        "東　京","神　田","秋葉原","御徒町","上　野","鶯　谷",
+    //        "日暮里","西日暮里","田　端","駒　込","巣　鴨","大　塚",
+    //        "池　袋","目　白","高田馬場","新大久保","新　宿","代々木",
+    //        "原　宿","渋　谷","恵比寿","目　黒","五反田"
+    //    };
 
 
     // 簡易版(テスト用)
-    //string[] stations = new string[3]
-    //    {
-    //        "大　崎","品　川","田　町"
-    //    };
+    string[] stations = new string[2]
+        {
+            "大　崎","品　川"
+        };
 
     int stationCount = 0;
-
+    // 残り駅数
+    int stationCountDown;
 
     // 電車
     GameObject trains;
@@ -63,6 +66,8 @@ public class BackgroundController : MonoBehaviour
         lastBackground = GameObject.FindGameObjectWithTag("LastBackground");
         stationBackground = GameObject.FindGameObjectWithTag("MainBackground");
 
+        uiController = GameObject.Find("UIController");
+
         defaultPosX = transform.position.x;
         stopPosX = defaultPosX;
 
@@ -73,10 +78,10 @@ public class BackgroundController : MonoBehaviour
         if (stations.Length >= 1)
         {
             stationName.text = stations[stations.Length - 1];
+            stationCountDown = stations.Length;
         }
 
         uiController = GameObject.Find("UIController");
-
     }
 
     void Update()
@@ -100,7 +105,7 @@ public class BackgroundController : MonoBehaviour
                         stationCount++;
 
                         // 駅が近づいたことを知らせる
-                        uiController.GetComponent<UIController>().notifyStation(stationName.text);
+                        uiController.GetComponent<UIController>().NotifyStation(stationName.text);
                     }
 
                     // 停車位置を再設定
@@ -112,7 +117,7 @@ public class BackgroundController : MonoBehaviour
 
 
             // 駅に到着したとき
-            if (transform.position.x <= stopPosX)
+            if (!isStopBg && transform.position.x <= stopPosX)
             {
                 // 背景を止める
                 StopBackGround(false);
@@ -120,20 +125,23 @@ public class BackgroundController : MonoBehaviour
                 // 電車を止める
                 trains.GetComponent<TrainController>().StopTrain();
 
-                // テキストを非表示にする
-                uiController.GetComponent<UIController>().hiddenText();
+                // アナウンスのテキストを非表示にする
+                uiController.GetComponent<UIController>().HiddenText();
 
+                //残り駅数を減らす
+                uiController.GetComponent<UIController>().StationCountDown();
+            }
+            else if (isStopBg)
+            {
                 // 最後の駅に到着した場合、ゲームクリアを表示する
                 if (stationCount == stations.Length)
                 {
-                    GameObject uiController = GameObject.Find("UIController");
                     uiController.GetComponent<UIController>().FinishGame("GAME CLEAR");
 
                     isFinishedGame = true;
                     isStopBg = false;
                 }
-
-                if (isStopBg)
+                else
                 {
                     this.delta += Time.deltaTime;
 
@@ -150,6 +158,8 @@ public class BackgroundController : MonoBehaviour
                         stopPosX = -10000;
                     }
                 }
+
+
             }
         }
 
