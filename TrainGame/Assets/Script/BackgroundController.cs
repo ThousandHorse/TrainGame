@@ -20,23 +20,20 @@ public class BackgroundController : MonoBehaviour
 
     public TextMeshProUGUI stationName;
 
-
-
-    //string[] stations = new string[29]
-    //    {
-    //        "大　崎","品　川","田　町","浜松町","新　橋","有楽町",
-    //        "東　京","神　田","秋葉原","御徒町","上　野","鶯　谷",
-    //        "日暮里","西日暮里","田　端","駒　込","巣　鴨","大　塚",
-    //        "池　袋","目　白","高田馬場","新大久保","新　宿","代々木",
-    //        "原　宿","渋　谷","恵比寿","目　黒","五反田"
-    //    };
-
+    string[] stations = new string[29]
+        {
+            "大　崎","品　川","田　町","浜松町","新　橋","有楽町",
+            "東　京","神　田","秋葉原","御徒町","上　野","鶯　谷",
+            "日暮里","西日暮里","田　端","駒　込","巣　鴨","大　塚",
+            "池　袋","目　白","高田馬場","新大久保","新　宿","代々木",
+            "原　宿","渋　谷","恵比寿","目　黒","五反田"
+        };
 
     // 簡易版(テスト用)
-    string[] stations = new string[2]
-        {
-            "大　崎","品　川"
-        };
+    //string[] stations = new string[2]
+    //    {
+    //        "大　崎","品　川"
+    //    };
 
     int stationCount = 0;
     // 残り駅数
@@ -158,8 +155,6 @@ public class BackgroundController : MonoBehaviour
                         stopPosX = -10000;
                     }
                 }
-
-
             }
         }
 

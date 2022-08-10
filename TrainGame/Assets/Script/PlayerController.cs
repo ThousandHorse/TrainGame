@@ -89,12 +89,20 @@ public class PlayerController : MonoBehaviour
 
     }
 
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         // 電車に着地したとき
         if (collision.gameObject.CompareTag("TrainStage"))
         {
             jumpCount = 2;
+        }
+
+        // 障害物に衝突したとき
+        if (collision.gameObject.CompareTag("Obstacle"))
+        {
+            // エフェクトを排出する
+            gameObject.GetComponent<ParticleSystem>().Play();
         }
        
     }

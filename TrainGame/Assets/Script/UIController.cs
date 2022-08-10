@@ -6,7 +6,8 @@ using TMPro;
 public class UIController : MonoBehaviour
 {
     const int STATION_SUM = 29;
-    const int STATION_SUM_TEST = 2;
+    // テスト用
+    //const int STATION_SUM = 2;
 
     GameObject trains;
     GameObject mainBackground;
@@ -43,7 +44,7 @@ public class UIController : MonoBehaviour
         mainBackground = GameObject.FindGameObjectWithTag("MainBackground");
 
 
-        stationCountDown = STATION_SUM_TEST + 1;
+        stationCountDown = STATION_SUM + 1;
 
     }
 
@@ -64,7 +65,7 @@ public class UIController : MonoBehaviour
         // 4回目に衝突した場合
         else
         {
-            FinishGame($"GAME OVER\n記録：{STATION_SUM_TEST - stationCountDown}/{STATION_SUM_TEST}駅達成！");
+            FinishGame($"GAME OVER\n記録：{STATION_SUM - stationCountDown}/{STATION_SUM}駅達成！");
         }
 
     }
