@@ -8,6 +8,20 @@ public class PlayerController : MonoBehaviour
     private float playerScale = 1.5f;
     private float limitX = 10.1f;
     private float limitY = 4.4f;
+    
+    // 点滅用
+    private Renderer playerRend;
+    // 点滅時間
+    const float FLASHING_SPAN = 0.05f;
+
+    // 無敵時間
+    const float INVINCIBLE_SPAN = 2.0f;
+
+    // 点滅間隔
+    float currentTime = 0;
+
+    // 点滅する時間(無敵時間)
+    float invincibleTime = 0;
 
     uint jumpCount = 2;
 
@@ -15,6 +29,8 @@ public class PlayerController : MonoBehaviour
     Animator animator;
     float jumpForce = 400.0f;
     int moveKey;
+
+    bool isCollision;
 
     public void LButtonDown()
     {
@@ -52,6 +68,7 @@ public class PlayerController : MonoBehaviour
         this.rigid2D = GetComponent<Rigidbody2D>();
         this.animator = GetComponent<Animator>();
         //isJumpping = false;
+        playerRend = GetComponent<Renderer>();
     }
 
     void Update()
@@ -87,8 +104,30 @@ public class PlayerController : MonoBehaviour
             transform.localScale = new Vector3(playerScale * moveKey, playerScale, 1);
         }
 
-    }
 
+        if (isCollision)
+        {
+            currentTime += Time.deltaTime;
+            invincibleTime += Time.deltaTime;
+
+            // 点滅させる
+            if (currentTime > FLASHING_SPAN)
+            {
+                playerRend.enabled = !playerRend.enabled;
+                currentTime = 0;
+
+                // TODO; 当たり判定をOFFにする
+            }
+            // 無敵時間経過後、点滅させないようにする
+            if (invincibleTime > INVINCIBLE_SPAN)
+            {
+                isCollision = false;
+                invincibleTime = 0;
+                playerRend.enabled = true;
+            }
+        }
+
+    }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -99,12 +138,15 @@ public class PlayerController : MonoBehaviour
         }
 
         // 障害物に衝突したとき
-        if (collision.gameObject.CompareTag("Obstacle"))
+        if (!isCollision && collision.gameObject.CompareTag("Obstacle"))
         {
             // エフェクトを排出する
-            gameObject.GetComponent<ParticleSystem>().Play();
+            //gameObject.GetComponent<ParticleSystem>().Play();
+
+            // 点滅させるようにする
+            isCollision = true;
         }
-       
+
     }
 
 }

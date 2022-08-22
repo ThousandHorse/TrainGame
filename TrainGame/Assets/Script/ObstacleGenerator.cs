@@ -13,6 +13,8 @@ public class ObstacleGenerator : MonoBehaviour
 
     int birdIndex;
 
+    bool isStartedGame = false;
+
     GameObject train;
 
     void Start()
@@ -29,18 +31,21 @@ public class ObstacleGenerator : MonoBehaviour
 
     void Update()
     {
-        this.delta += Time.deltaTime;
-        if (this.delta > span)
+        if (isStartedGame)
         {
-            this.delta = 0;
-            startPosY = Random.Range(-2.8f, 1.0f);
-            this.span = Random.Range(1.5f, 4.0f);
+            this.delta += Time.deltaTime;
+            if (this.delta > span)
+            {
+                this.delta = 0;
+                startPosY = Random.Range(-2.8f, 1.0f);
+                this.span = Random.Range(1.5f, 4.0f);
 
-            // 鳥をランダムで表示させる
-            birdIndex = Random.Range(0, birdPrefabs.Length);
+                // 鳥をランダムで表示させる
+                birdIndex = Random.Range(0, birdPrefabs.Length);
 
-            GameObject go = Instantiate(birdPrefabs[birdIndex]) as GameObject;
-            go.transform.position = new Vector3(startPosX, startPosY, 0);
+                GameObject go = Instantiate(birdPrefabs[birdIndex]) as GameObject;
+                go.transform.position = new Vector3(startPosX, startPosY, 0);
+            }
         }
     }
 
@@ -49,5 +54,9 @@ public class ObstacleGenerator : MonoBehaviour
         Destroy(gameObject);
     }
 
-    
+    public void StartedGame()
+    {
+        isStartedGame = true;
+    }
+
 }

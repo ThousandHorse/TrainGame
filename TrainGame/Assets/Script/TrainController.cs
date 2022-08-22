@@ -6,10 +6,11 @@ public class TrainController : MonoBehaviour
     float span = 0.1f;
     float delta = 0;
     bool isStopped = false;
+    bool isStartedGame = false;
 
     void Update()
     {
-        if (!isStopped)
+        if (isStartedGame && !isStopped)
         {
             transform.position += new Vector3(0, trainTransform, 0);
             this.delta += Time.deltaTime;
@@ -20,6 +21,8 @@ public class TrainController : MonoBehaviour
                 trainTransform *= -1;
 
             }
+
+            //GetComponent<AudioSource>().Play();
         }
     }
 
@@ -31,6 +34,11 @@ public class TrainController : MonoBehaviour
     public void RunTrain()
     {
         isStopped = false;
+    }
+
+    public void StartedGame()
+    {
+        isStartedGame = true;
     }
 
 }

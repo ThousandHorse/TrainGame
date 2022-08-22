@@ -9,6 +9,7 @@ public class BackgroundController : MonoBehaviour
     float speed;
     bool isStopBg = false;
     bool isFinishedGame = false;
+    bool isStartedGame = false;
     float delta = 0;
 
     // ƒQ[ƒ€ŠJn‚ÌˆÊ’u
@@ -66,7 +67,7 @@ public class BackgroundController : MonoBehaviour
         uiController = GameObject.Find("UIController");
 
         defaultPosX = transform.position.x;
-        stopPosX = defaultPosX;
+        stopPosX = -10000;
 
         firstBgPosX = defaultPosX - firstBackground.transform.position.x;
 
@@ -83,7 +84,7 @@ public class BackgroundController : MonoBehaviour
 
     void Update()
     {
-        if (!isFinishedGame)
+        if (isStartedGame && !isFinishedGame)
         {
             // ”wŒi‚ğx²•ûŒü‚ÉˆÚ“®‚³‚¹‚é
             transform.position -= new Vector3(speed, 0, 0);
@@ -173,6 +174,11 @@ public class BackgroundController : MonoBehaviour
     {
         speed = BACKGROUND_SPEED;
         isStopBg = false;
+    }
+
+    public void StartedGame()
+    {
+        isStartedGame = true;
     }
 
 }
